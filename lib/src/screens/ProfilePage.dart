@@ -103,10 +103,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                height: MediaQuery.of(context).size.height * 0.1,
+                                width: MediaQuery.of(context).size.width * 0.55,
+                                // height: MediaQuery.of(context).size.height * 0.1,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       empName,

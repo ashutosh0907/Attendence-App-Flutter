@@ -3,6 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
+  geolocator_windows
+  network_info_plus
   permission_handler_windows
 )
 

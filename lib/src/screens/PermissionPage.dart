@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class PermissionPage extends StatefulWidget {
   static get enabled => null;
@@ -23,10 +24,12 @@ class _PermissionPageState extends State<PermissionPage> {
   @override
   void initState() {
     setData();
+    checkRequiredPermissions();
     super.initState();
   }
 
   bool location = false;
+  bool wifi = false;
   String empName = "";
 
   @override
@@ -125,9 +128,6 @@ class _PermissionPageState extends State<PermissionPage> {
                       PermissionStatus locationStatus =
                           await Permission.location.request();
                       if (locationStatus == PermissionStatus.granted) {
-                        if (kDebugMode) {
-                          print("granted");
-                        }
                         // ScaffoldMessenger.of(context).showSnackBar(
                         //   const SnackBar(
                         //     backgroundColor: Colors.greenAccent,
@@ -241,7 +241,19 @@ class _PermissionPageState extends State<PermissionPage> {
                   ),
                   // Wifi Button
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var connectivityResult =
+                          await (Connectivity().checkConnectivity());
+                      if (connectivityResult == ConnectivityResult.wifi) {
+                        wifi = true;
+                        setState(() {});
+                      } else {
+                        wifi = false;
+                        setState(() {});
+                        showAlertDialog1(
+                            "Connect", "Please connect to the workspace wifi");
+                      }
+                    },
                     style: TextButton.styleFrom(
                       fixedSize: Size.fromWidth(
                           MediaQuery.of(context).size.width * 0.7),
@@ -274,13 +286,30 @@ class _PermissionPageState extends State<PermissionPage> {
                             borderRadius: BorderRadius.circular(6),
                             color: Colors.white,
                           ),
-                          child: const Center(
-                            child: Text(
-                              'Disconnected',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.red,
-                              ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Visibility(
+                                  visible: wifi,
+                                  child: const Text(
+                                    'Connected',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: !wifi,
+                                  child: const Text(
+                                    'Disconnected',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -292,7 +321,18 @@ class _PermissionPageState extends State<PermissionPage> {
                         top: MediaQuery.of(context).size.height * 0.1),
                     child: TextButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, MyRoutes.home);
+                        if (location && wifi) {
+                          Navigator.pushNamed(context, MyRoutes.home);
+                        } else if (!location && !wifi) {
+                          showAlertDialog1(
+                              "Required", "Please allow necessary permissions");
+                        } else if (!location) {
+                          showAlertDialog1("Location permission",
+                              "Please allow location permission");
+                        } else if (!wifi) {
+                          showAlertDialog1("Wifi connection",
+                              "Please connect to the workspace wifi");
+                        }
                       },
                       style: TextButton.styleFrom(
                         fixedSize: Size.fromWidth(
@@ -303,7 +343,7 @@ class _PermissionPageState extends State<PermissionPage> {
                         backgroundColor: Colors.white,
                       ),
                       child: const Text(
-                        'Get Attendence',
+                        'Get Attendance',
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.deepPurple,
@@ -363,10 +403,67 @@ class _PermissionPageState extends State<PermissionPage> {
     Map<String, dynamic> loginResponse =
         jsonDecode(response!) as Map<String, dynamic>;
     if (kDebugMode) {
-      print(
-          "On the permission page : : ${loginResponse['employee']['employee_name']}");
+      print("On the permission page : : ${loginResponse['employee']}");
     }
     empName = loginResponse['employee']['employee_name'];
+    // setState(() {});
+  }
+
+  void showAlertDialog1(String title, String msg) {
+    Widget okButton = TextButton(
+      child: const Text(
+        "OK",
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        title,
+        style:
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+      content: Text(
+        msg,
+        style:
+            const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void checkRequiredPermissions() async {
+    PermissionStatus locationStatus = await Permission.location.request();
+    if (locationStatus == PermissionStatus.granted) {
+      location = true;
+    }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.wifi) {
+      wifi = true;
+    }
     setState(() {});
+    if(wifi && location){
+      checkAndNavigate();
+    }
+  }
+
+  void checkAndNavigate() {
+    Navigator.pushNamed(context, '/home');
   }
 }

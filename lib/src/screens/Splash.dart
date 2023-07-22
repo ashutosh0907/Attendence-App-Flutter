@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:attendify_main/src/constants/image_path.dart';
 import 'package:attendify_main/src/screens/LoginPage.dart';
 import 'package:attendify_main/src/screens/PermissionPage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
@@ -20,6 +18,9 @@ class _SplashState extends State<Splash> {
 
   @override
   void initState() {
+    if (kDebugMode) {
+      print("object");
+    }
     super.initState();
     checkLogin();
   }
@@ -27,13 +28,13 @@ class _SplashState extends State<Splash> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.white,
-            statusBarIconBrightness: Brightness.dark),
-      ),
+      // appBar: AppBar(
+      //   elevation: 0,
+      //   backgroundColor: Colors.white,
+      //   systemOverlayStyle: const SystemUiOverlayStyle(
+      //       statusBarColor: Colors.white,
+      //       statusBarIconBrightness: Brightness.dark),
+      // ),
       body: Container(
         color: Colors.white,
         child: Center(
@@ -48,7 +49,6 @@ class _SplashState extends State<Splash> {
 
   void checkLogin() async{
     var prefs = await SharedPreferences.getInstance();
-    Map<String,dynamic> loginResponse;
     String? response = prefs.getString('loginResponse');
     if(response != null){
       Timer(const Duration(seconds: 3), () {

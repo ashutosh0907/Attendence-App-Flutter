@@ -1,13 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 class NetWork {
   static Future<dynamic> getNetwork({required String url, bool token = false}) async {
     try {
       var headers = <String, String>{};
       if (token) {
-        // Token Logic
-        headers['Authorization'] = 'Bearer <YOUR_TOKEN>';
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? response = prefs.getString('loginResponse');
+        Map<String, dynamic> loginResponse = jsonDecode(response!) as Map<String, dynamic>;
+        var token = loginResponse['token'];
+        headers['Authorization'] = 'Bearer $token';
+      }
+      if (kDebugMode) {
+        print("Url : $url \nToken : $token\nHeaders : $headers");
       }
       var response = await http.get(
         Uri.parse(url),
@@ -26,7 +33,14 @@ class NetWork {
     try {
       var headers = {'Content-Type': 'application/json'};
       if (token) {
-        headers['Authorization'] = 'Bearer <YOUR_TOKEN>';
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? response = prefs.getString('loginResponse');
+        Map<String, dynamic> loginResponse = jsonDecode(response!) as Map<String, dynamic>;
+        var token = loginResponse['token'];
+        headers['Authorization'] = 'Bearer $token';
+      }
+      if (kDebugMode) {
+        print("Url : $url \nPayload : $payload \nToken : $token\nHeaders : $headers");
       }
       var response = await http.post(
         Uri.parse(url),
