@@ -42,6 +42,7 @@ dependencies:
   network_info_plus: ^3.0.2
   connectivity_plus: ^3.0.3
   geolocator: ^9.0.2
+  background_fetch: ^1.1.6
 
 dev_dependencies:
   flutter_test:

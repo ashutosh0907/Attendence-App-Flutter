@@ -53,285 +53,113 @@ class _PermissionPageState extends State<PermissionPage> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height / 3.4,
-            color: Colors.white,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.1,
-                  child: Center(
-                    child: Text(
-                      'Hello, $empName',
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontFamily: 'Heading'),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: Center(
-                      child: Image.asset(
-                        ImagePath.permission,
-                        width: MediaQuery.of(context).size.width * 0.7,
-                      ),
-                    ))
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                  color: Colors.blue.shade800,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  )),
+      body: Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height / 3.4,
+              color: Colors.white,
               child: Column(
                 children: [
-                  // Allow Location Access
-                  Container(
-                    margin: const EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Center(
-                            child: Text(
-                          'Allow Location Access',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        )),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            ImagePath.location,
-                            width: 30,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  // GPS Button
-                  TextButton(
-                    onPressed: () async {
-                      // checkPermission(Permission.location);
-                      if (kDebugMode) {
-                        print('clicked on GPS');
-                      }
-                      PermissionStatus locationStatus =
-                          await Permission.location.request();
-                      if (locationStatus == PermissionStatus.granted) {
-                        // ScaffoldMessenger.of(context).showSnackBar(
-                        //   const SnackBar(
-                        //     backgroundColor: Colors.greenAccent,
-                        //     padding: EdgeInsets.all(15),
-                        //     behavior: SnackBarBehavior.floating,
-                        //     margin: EdgeInsets.all(30),
-                        //     elevation: 30,
-                        //     content: Text(
-                        //       'Permission Granted',
-                        //       style: TextStyle(
-                        //           color: Colors.black,
-                        //           fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // );
-                        setState(() {
-                          location = true;
-                        });
-                      }
-                      if (locationStatus == PermissionStatus.denied) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text('This Permission is recommended')));
-                      }
-                      if (locationStatus ==
-                          PermissionStatus.permanentlyDenied) {
-                        // openAppSettings();
-                        showAlertDialog(context);
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      fixedSize: Size.fromWidth(
-                          MediaQuery.of(context).size.width * 0.7),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    child: Center(
+                      child: Text(
+                        'Hello, $empName',
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                            fontFamily: 'Heading'),
                       ),
-                      backgroundColor: Colors.white,
-                    ),
-                    child: const Text(
-                      'GPS',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.deepPurple,
-                          fontFamily: 'Heading'),
                     ),
                   ),
-                  // Connected & Disconnected
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: FractionallySizedBox(
-                        widthFactor: 0.4,
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Visibility(
-                                  visible: location,
-                                  child: const Text(
-                                    'Connected',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.green),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: !location,
-                                  child: const Text(
-                                    'Disconnected',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      child: Center(
+                        child: Image.asset(
+                          ImagePath.permission,
+                          width: MediaQuery.of(context).size.width * 0.7,
                         ),
-                      ),
-                    ),
-                  ),
-                  // Connect to wifi
-                  Container(
-                    margin: const EdgeInsets.only(top: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Center(
-                            child: Text(
-                          'Connect to Wifi',
-                          style: TextStyle(fontSize: 20, color: Colors.white),
-                        )),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            ImagePath.wifi,
-                            width: 30,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  // Wifi Button
-                  TextButton(
-                    onPressed: () async {
-                      var connectivityResult =
-                          await (Connectivity().checkConnectivity());
-                      if (connectivityResult == ConnectivityResult.wifi) {
-                        wifi = true;
-                        setState(() {});
-                      } else {
-                        wifi = false;
-                        setState(() {});
-                        showAlertDialog1(
-                            "Connect", "Please connect to the workspace wifi");
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      fixedSize: Size.fromWidth(
-                          MediaQuery.of(context).size.width * 0.7),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      backgroundColor: Colors.white,
-                    ),
-                    child: const Text(
-                      'WIFI',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.deepPurple,
-                          fontFamily: 'Heading'),
-                    ),
-                  ),
-                  // Connected & Disconnected
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: FractionallySizedBox(
-                        widthFactor: 0.4,
-                        alignment: Alignment.topLeft,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            color: Colors.white,
-                          ),
-                          child: Center(
-                            child: Column(
-                              children: [
-                                Visibility(
-                                  visible: wifi,
-                                  child: const Text(
-                                    'Connected',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: !wifi,
-                                  child: const Text(
-                                    'Disconnected',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      ))
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                    color: Colors.blue.shade800,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      topRight: Radius.circular(40),
+                    )),
+                child: Column(
+                  children: [
+                    // Allow Location Access
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Center(
+                              child: Text(
+                            'Allow Location Access',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          )),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Image.asset(
+                              ImagePath.location,
+                              width: 30,
                             ),
-                          ),
-                        ),
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.1),
-                    child: TextButton(
-                      onPressed: () {
-                        if (location && wifi) {
-                          Navigator.pushNamed(context, MyRoutes.home);
-                        } else if (!location && !wifi) {
-                          showAlertDialog1(
-                              "Required", "Please allow necessary permissions");
-                        } else if (!location) {
-                          showAlertDialog1("Location permission",
-                              "Please allow location permission");
-                        } else if (!wifi) {
-                          showAlertDialog1("Wifi connection",
-                              "Please connect to the workspace wifi");
+                    // GPS Button
+                    TextButton(
+                      onPressed: () async {
+                        // checkPermission(Permission.location);
+                        if (kDebugMode) {
+                          print('clicked on GPS');
+                        }
+                        PermissionStatus locationStatus =
+                            await Permission.location.request();
+                        if (locationStatus == PermissionStatus.granted) {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //   const SnackBar(
+                          //     backgroundColor: Colors.greenAccent,
+                          //     padding: EdgeInsets.all(15),
+                          //     behavior: SnackBarBehavior.floating,
+                          //     margin: EdgeInsets.all(30),
+                          //     elevation: 30,
+                          //     content: Text(
+                          //       'Permission Granted',
+                          //       style: TextStyle(
+                          //           color: Colors.black,
+                          //           fontWeight: FontWeight.bold,
+                          //       ),
+                          //     ),
+                          //   ),
+                          // );
+                          setState(() {
+                            location = true;
+                          });
+                        }
+                        if (locationStatus == PermissionStatus.denied) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('This Permission is recommended')));
+                        }
+                        if (locationStatus ==
+                            PermissionStatus.permanentlyDenied) {
+                          // openAppSettings();
+                          showAlertDialog(context);
                         }
                       },
                       style: TextButton.styleFrom(
@@ -343,19 +171,194 @@ class _PermissionPageState extends State<PermissionPage> {
                         backgroundColor: Colors.white,
                       ),
                       child: const Text(
-                        'Get Attendance',
+                        'GPS',
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.deepPurple,
                             fontFamily: 'Heading'),
                       ),
                     ),
-                  )
-                ],
+                    // Connected & Disconnected
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.4,
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: location,
+                                    child: const Text(
+                                      'Connected',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.green),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: !location,
+                                    child: const Text(
+                                      'Disconnected',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Connect to wifi
+                    Container(
+                      margin: const EdgeInsets.only(top: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Center(
+                              child: Text(
+                            'Connect to Wifi',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          )),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Image.asset(
+                              ImagePath.wifi,
+                              width: 30,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    // Wifi Button
+                    TextButton(
+                      onPressed: () async {
+                        var connectivityResult =
+                            await (Connectivity().checkConnectivity());
+                        if (connectivityResult == ConnectivityResult.wifi) {
+                          wifi = true;
+                          setState(() {});
+                        } else {
+                          wifi = false;
+                          setState(() {});
+                          showAlertDialog1(
+                              "Connect", "Please connect to the workspace wifi");
+                        }
+                      },
+                      style: TextButton.styleFrom(
+                        fixedSize: Size.fromWidth(
+                            MediaQuery.of(context).size.width * 0.7),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        backgroundColor: Colors.white,
+                      ),
+                      child: const Text(
+                        'WIFI',
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.deepPurple,
+                            fontFamily: 'Heading'),
+                      ),
+                    ),
+                    // Connected & Disconnected
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: FractionallySizedBox(
+                          widthFactor: 0.4,
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                            ),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  Visibility(
+                                    visible: wifi,
+                                    child: const Text(
+                                      'Connected',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: !wifi,
+                                    child: const Text(
+                                      'Disconnected',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.1),
+                      child: TextButton(
+                        onPressed: () {
+                          if (location && wifi) {
+                            Navigator.pushNamed(context, MyRoutes.home);
+                          } else if (!location && !wifi) {
+                            showAlertDialog1(
+                                "Required", "Please allow necessary permissions");
+                          } else if (!location) {
+                            showAlertDialog1("Location permission",
+                                "Please allow location permission");
+                          } else if (!wifi) {
+                            showAlertDialog1("Wifi connection",
+                                "Please connect to the workspace wifi");
+                          }
+                        },
+                        style: TextButton.styleFrom(
+                          fixedSize: Size.fromWidth(
+                              MediaQuery.of(context).size.width * 0.7),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          backgroundColor: Colors.white,
+                        ),
+                        child: const Text(
+                          'Get Attendance',
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.deepPurple,
+                              fontFamily: 'Heading'),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -27,8 +27,6 @@ class Item {
   final String imageUrl;
   final String text;
   final String navigation;
-
-
   Item({required this.imageUrl, required this.text, required this.navigation});
 }
 
@@ -55,6 +53,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     updateAllStatus(); // To Update The Previous Status Of The Session
     setEmployeeData(); // To Display Dynamic Name On The Drawer
+    startGeofenceService();
     super.initState();
   }
 
@@ -227,7 +226,8 @@ class _HomePageState extends State<HomePage> {
                         top: MediaQuery.of(context).size.height * 0.1),
                     child: TextButton(
                       onPressed: () {
-                        showConfirmDialogue("End session", "Are you sure, do you want to end your today's session?");
+                        showConfirmDialogue("End session",
+                            "Are you sure, do you want to end your today's session?");
                       },
                       style: TextButton.styleFrom(
                         fixedSize: Size.fromWidth(
@@ -497,33 +497,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // On START SESSION geofence is setting up with response code 200
-  // Future<void> _setUpGeofence() async {
-  //   if (kDebugMode) {
-  //     print("Inside _setupGeofence()");
-  //   }
-  //   Geolocator.getPositionStream().listen((Position position) {
-  //     double distanceFromCenter = Geolocator.distanceBetween(
-  //       position.latitude,
-  //       position.longitude,
-  //       targetLatitude,
-  //       targetLongitude,
-  //     );
-  //     if (distanceFromCenter > geofenceRadius) {
-  //       _performOutTask();
-  //     }
-  //     if(distanceFromCenter < geofenceRadius){
-  //       _performInTask();
-  //     }
-  //   });
-  // }
-
   Future<void> _setUpGeofence() async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setBool('geofenceStarted', true);
+    if (kDebugMode) {
+      print("Geofence Started : ${prefs.getBool('geofenceStarted')}");
+    }
     if (kDebugMode) {
       print("Inside _setUpGeofence()");
     }
-
-    _positionSubscription = Geolocator.getPositionStream().listen((Position position) {
+    _positionSubscription =
+        Geolocator.getPositionStream().listen((Position position) {
       double distanceFromCenter = Geolocator.distanceBetween(
         position.latitude,
         position.longitude,
@@ -531,9 +515,15 @@ class _HomePageState extends State<HomePage> {
         targetLongitude,
       );
 
-      if (distanceFromCenter > geofenceRadius) {
+      if (distanceFromCenter > geofenceRadius && sessionStatus == true) {
+        if (kDebugMode) {
+          print("out task");
+        }
         _performOutTask();
-      } else {
+      } else if (distanceFromCenter < geofenceRadius && sessionStatus == true) {
+        if (kDebugMode) {
+          print("in task");
+        }
         _performInTask();
       }
     });
@@ -545,12 +535,11 @@ class _HomePageState extends State<HomePage> {
     if (kDebugMode) {
       print("User went outside the required location. Performing the task.");
     }
-    if(breakStatus == false){
+    if (breakStatus == false) {
       handleBreakStart();
-    }
-    else {
+    } else {
       if (kDebugMode) {
-        print("ashutosh bahar hai ");
+        print("Out");
       }
     }
     // showDialog(
@@ -574,7 +563,7 @@ class _HomePageState extends State<HomePage> {
     if (kDebugMode) {
       print("User went outside the required location. Performing the task.");
     }
-    if(breakStatus){
+    if (breakStatus) {
       handleBreakEnd();
     } else {
       if (kDebugMode) {
@@ -670,7 +659,6 @@ class _HomePageState extends State<HomePage> {
     if (kDebugMode) {
       print("Update : ${prefs.getBool('started')}");
     }
-
     // Getting the status of the breaks
     bool? breakValue = prefs.getBool('break');
     breakStatus = breakValue ?? false;
@@ -705,7 +693,9 @@ class _HomePageState extends State<HomePage> {
           stopGeofenceUpdates();
         } else {
           endLoader();
-          print("res ------------> $res");
+          if (kDebugMode) {
+            print("res ------------> $res");
+          }
           showAlertDialog1("Alert", "Something went wrong else part!");
         }
       } catch (error) {
@@ -720,15 +710,6 @@ class _HomePageState extends State<HomePage> {
 
   // Triggered when the user clicks on TAKE A BREAK
   void handleBreakStart() async {
-    // final info = NetworkInfo();
-    // final wifiName = await info.getWifiName(); // "FooNetwork"
-    // final wifiBSSID = await info.getWifiBSSID();
-    // if (kDebugMode) {
-    //   print("--------------------$wifiName");
-    //   print("--------------------$wifiBSSID");
-    //   final wifiGateway = await info.getWifiGatewayIP();
-    //   print("--------------------$wifiGateway");
-    // }
     showLoader(context, true);
     var url = '${URL.baseUrl}addAttendance?_format=json';
     var payload = {
@@ -979,12 +960,14 @@ class _HomePageState extends State<HomePage> {
 
   // Triggers when user hits END SESSION
   void handleLogout() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
-    );
+    stopGeofenceUpdates();
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (Route route) => false);
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => const LoginPage(),
+    //   ),
+    // );
   }
 
   // Shown whenever showLoader(context, true) is passed to this and the loader is not closing on hardware backpress.
@@ -1033,7 +1016,6 @@ class _HomePageState extends State<HomePage> {
       onPressed: () async {
         // Ending the session on confirmation
         handleEnd();
-        Navigator.of(context, rootNavigator: true).pop();
       },
     );
     // set up the AlertDialog
@@ -1059,4 +1041,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void startGeofenceService() async {
+    if (kDebugMode) {
+      print("setting up geofence");
+    }
+    var prefs = await SharedPreferences.getInstance();
+    var geofenceStartedStatus = prefs.getBool('geofenceStarted');
+    if (kDebugMode) {
+      print("geofenceStartedStatus -> $geofenceStartedStatus");
+    }
+    if (geofenceStartedStatus == null || geofenceStartedStatus == true) {
+      _setUpGeofence();
+    }
+  }
 }
